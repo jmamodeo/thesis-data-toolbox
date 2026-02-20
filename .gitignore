@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+
+# Jupyter Notebooks
+*.ipynb
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Environment
+.env
+venv/
+
+# Build
+build/
+dist/
+
+# Logs
+*.log
+
+# Test
+htmlcov/
+.coverage
+.cache/
+
+# Misc
+*.swp
+*.bak
+*.tmp
+
+# Ignore TODO folder cache
+src/tdtb/TODO/__pycache__/

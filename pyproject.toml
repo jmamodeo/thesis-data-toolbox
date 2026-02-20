@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tdtb"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "John Amodeo", email = "john.amodeo316@gmail.com"},
+]
+dependencies = [
+    "spikeinterface",
+    "tdt",
+    "numpy",
+    "pandas",
+    "probeinterface",
+    "matplotlib",
+    "streamlit",
+    "mountainsort5",
+]
+requires-python = ">=3.8"
+
+[project.scripts]
+tdtb = "tdtb.main:main"
