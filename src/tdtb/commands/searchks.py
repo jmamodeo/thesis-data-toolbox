@@ -5,7 +5,7 @@ import spikeinterface.full as si
 from concurrent.futures import ProcessPoolExecutor
 
 from tdtb.functions.filter_task_table import filter_task_table
-from tdtb.functions.run_mountainsort import run_mountainsort
+from tdtb.functions.run_kilosort import run_kilosort
 from tdtb.functions.get_unit_rasters import get_unit_rasters
 from tdtb.functions.get_trial_frames import get_trial_frames
 from tdtb.functions.get_trial_spikes import get_trial_spikes
@@ -36,7 +36,7 @@ def get_score_log(data):
         sort_dicts.append(sort_dict)
 
     with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        list(executor.map(run_mountainsort, sort_dicts))
+        list(executor.map(run_kilosort, sort_dicts))
 
     thresh_list = [d.name for d in pass_1_path.iterdir() if d.is_dir()]
 
