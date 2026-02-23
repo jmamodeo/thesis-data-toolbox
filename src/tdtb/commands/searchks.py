@@ -24,13 +24,13 @@ def get_score_log(data):
     time_range = (-0.2, 1.0)
 
     sort_dicts = []
-    for threshold in pass_2_thresh_range:
-        sort_path = pass_1_path / f'threshold_{threshold}' / 'sort_object'
+    for pass_2_thresh in pass_2_thresh_range:
+        sort_path = pass_1_path / f'threshold_{pass_2_thresh}' / 'sort_object'
         sort_dict = {
             'rec_object': rec_object,
-            'threshold': threshold,
             'sort_path': sort_path,
             'pass_1_thresh': pass_1_thresh,
+            'pass_2_thresh': pass_2_thresh,
             'chunk_dur': chunk_dur,
         }
         sort_dicts.append(sort_dict)
