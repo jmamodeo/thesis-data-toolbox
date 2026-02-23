@@ -4,23 +4,20 @@ import spikeinterface.full as si
 
 def run_kilosort(data):
     rec_object = data['rec_object']
-    threshold = data['threshold']
     sort_path = data['sort_path']
-    pca_seed = data['pca_seed']
+    pass_1_thresh = data['pass_1_thresh']
+    pass_2_thresh = data['pass_2_thresh']
     chunk_dur = data['chunk_dur']
 
     job_kwargs = {"n_jobs": 1, "chunk_duration": f"{chunk_dur}s"}
     si.set_global_job_kwargs(**job_kwargs)
 
-    np.random.seed(pca_seed)
-    random.seed(pca_seed)
-
-    print(f"Running kilosort with threshold {threshold}...")
+    print(f"Running kilosort with threshold {pass_2_thresh}...")
 
     sorter_params = {
         'sorter_name': 'kilosort4',
-        'Th_universal': threshold,
-        'Th_learned': threshold,
+        'Th_universal': pass_1_thresh,
+        'Th_learned': pass_2_thresh,
         'do_CAR': False,
         'skip_kilosort_preprocessing': True,
     }
