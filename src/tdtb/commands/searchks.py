@@ -15,8 +15,8 @@ def get_score_log(data):
     rec_object = data['rec_object']
     task_table = data['task_table']
     pass_1_path = data['pass_1_path']
-    pass_1_thresh = data['pass_1_thresh']
-    pass_2_thresh_range = data['pass_2_thresh_range']
+    pass_1_threshold = data['pass_1_threshold']
+    pass_2_thresholds = data['pass_2_thresholds']
     num_workers = data['num_workers']
     chunk_dur = data['chunk_dur']
 
@@ -24,13 +24,13 @@ def get_score_log(data):
     time_range = (-0.2, 1.0)
 
     sort_dicts = []
-    for pass_2_thresh in pass_2_thresh_range:
-        sort_path = pass_1_path / f'threshold_{pass_2_thresh}' / 'sort_object'
+    for pass_2_threshold in pass_2_thresholds:
+        sort_path = pass_1_path / f'threshold_{pass_2_threshold}' / 'sort_object'
         sort_dict = {
             'rec_object': rec_object,
             'sort_path': sort_path,
-            'pass_1_thresh': pass_1_thresh,
-            'pass_2_thresh': pass_2_thresh,
+            'pass_1_threshold': pass_1_threshold,
+            'pass_2_threshold': pass_2_threshold,
             'chunk_dur': chunk_dur,
         }
         sort_dicts.append(sort_dict)
@@ -90,35 +90,38 @@ def searchks():
     num_workers = int(input("Number of workers: ").strip())
     chunk_dur = input("Chunk duration (s): ").strip()
 
+    pass_1_thresholds = [i/10 for i in range(pass_1_thresh_range[0], pass_1_thresh_range[1] + 1)]
+    pass_2_thresholds = [i/10 for i in range(pass_2_thresh_range[0], pass_2_thresh_range[1] + 1)]
+
     task_table = pd.read_csv(task_path)
     task_table = filter_task_table(task_table)
     rec_object = si.load(rec_path)
 
     best_scores = []
-    for pass_1_thresh in pass_1_thresh_range:
+    for pass_1_thresh in pass_1_thresholds:
         pass_1_path = sort_lib_path / f'threshold_{pass_1_thresh}'
         data = {
             'rec_object': rec_object,
             'task_table': task_table,
             'pass_1_path': pass_1_path,
-            'pass_1_thresh': pass_1_thresh,
-            'pass_2_thresh_range': pass_2_thresh_range,
+            'pass_1_threshold': pass_1_thresh,
+            'pass_2_thresholds': pass_2_thresholds,
             'num_workers': num_workers,
             'chunk_dur': chunk_dur,
         }
 
         score_log = get_score_log(data)
-        log_path = pass_1_path / f'pass_1_thresh_{pass_1_thresh}_score_log.csv'
+        log_path = pass_1_path / f'pass_1_threshold_{pass_1_thresh}_score_log.csv'
         score_log.to_csv(log_path, index=False)
 
         best_score = score_log.loc[score_log['score'].idxmax()]
         best_scores.append({
-            'pass_1_thresh': pass_1_thresh,
-            'pass_2_thresh': best_score['threshold'],
+            'pass_1_threshold': pass_1_thresh,
+            'pass_2_threshold': best_score['threshold'],
             'score': best_score['score'],
         })
 
     best_scores_log = pd.DataFrame(best_scores)
     best_scores_log = best_scores_log.sort_values(by='score', ascending=False)
-    best_scores_log_path = sort_lib_path / 'pass_1_thresh_best_scores_log.csv'
+    best_scores_log_path = sort_lib_path / 'pass_1_threshold_best_scores_log.csv'
     best_scores_log.to_csv(best_scores_log_path, index=False)

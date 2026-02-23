@@ -91,7 +91,7 @@ def searchms():
     chunk_dur = input("Chunk duration (s): ").strip()
 
     pca_seeds = [i for i in range(pca_seed_range[0], pca_seed_range[1] + 1)]
-    thresholds = [i/10 for i in range(thesh_range[0], (thesh_range[1] + 1))]
+    thresholds = [i/10 for i in range(thesh_range[0], thesh_range[1] + 1)]
 
     task_table = pd.read_csv(task_path)
     task_table = filter_task_table(task_table)
