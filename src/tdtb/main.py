@@ -1,13 +1,13 @@
 import argparse
 
-from tdtb.commands.alltasks import alltasks
+from tdtb.commands.addtasks import addtasks
 from tdtb.commands.procrec import procrec
 from tdtb.commands.searchms import searchms
 from tdtb.commands.unittables import unittables
 
 
 COMMANDS = {
-    'alltasks': alltasks,
+    'addtasks': addtasks,
     'procrec': procrec,
     'searchms': searchms,
     'unittables': unittables,

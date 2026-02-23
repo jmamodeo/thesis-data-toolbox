@@ -216,12 +216,16 @@ def procrec():
     get_chan_traces(raw_path)
     
     filtered_rec_path = filtered_path / "rec_object"
-    rec_object = si.center(rec_object)
-    rec_object = si.bandpass_filter(
-        rec_object, 
-        freq_min=300, 
-        freq_max=6000,
-    )
+    try:
+        rec_object = si.center(rec_object)
+        rec_object = si.bandpass_filter(
+            rec_object, 
+            freq_min=300, 
+            freq_max=6000,
+        )
+    except ValueError as e:
+        print(e)
+        print('Frequency too low for filtering. Skipping...')
     rec_object.save(folder=filtered_rec_path)
     get_chan_traces(filtered_path)
 

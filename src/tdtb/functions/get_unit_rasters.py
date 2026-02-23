@@ -53,15 +53,26 @@ def plot_spike_rasters(data):
     unit_ids = data['unit_ids']
     trial_spikes = data['trial_spikes']
     rast_path = data['rast_path']
+    trial_numbers = data.get('trial_numbers', None)
 
     with PdfPages(rast_path) as pdf:
         for unit in unit_ids:
             unit_spikes = trial_spikes[unit]
+            trial_indices = np.arange(len(unit_spikes))
             fig, ax = plt.subplots()
-            ax.eventplot(unit_spikes, linelengths=0.2, color='black')
+            ax.eventplot(
+                unit_spikes,
+                lineoffsets=trial_indices,
+                linelengths=0.2,
+                color='black',
+            )
             ax.set_xlabel("Time (s)")
             ax.set_ylabel("Trials")
-            ax.set_yticks(np.arange(len(unit_spikes)))
+            ax.set_yticks(trial_indices)
+            if trial_numbers is not None and len(trial_numbers) == len(unit_spikes):
+                ax.set_yticklabels([f"{int(tn)}" for tn in trial_numbers])
+            else:
+                ax.set_yticklabels([f"{i + 1}" for i in trial_indices])
             ax.set_title(f"Unit {unit}")
             pdf.savefig(fig)
             plt.close(fig)
@@ -87,6 +98,7 @@ def get_unit_rasters(thresh_path):
         task_table = task_table.sort_values('Tcnt').reset_index(drop=True)
         indices = np.linspace(0, len(task_table) - 1, trial_max, dtype=int)
         task_table = task_table.iloc[indices]
+    trial_numbers = task_table['Tcnt'].values
 
     event_name = 'gabors_on_time'
     frame_start = -0.5
@@ -102,6 +114,7 @@ def get_unit_rasters(thresh_path):
         "time_range": (frame_start, frame_stop),
         'event_name': event_name,
         'rast_path': rast_path,
+        'trial_numbers': trial_numbers,
     }
 
     data = get_trial_frames(data)
