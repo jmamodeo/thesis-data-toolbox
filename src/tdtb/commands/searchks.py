@@ -85,7 +85,6 @@ def searchks():
     pass_1_thresh_range = [int((float(i) * 10)) for i in pass_1_thresh_range.split('-')]
     pass_2_thresh_range = input("Second pass threshold range: ").strip()
     pass_2_thresh_range = [int((float(i) * 10)) for i in pass_2_thresh_range.split('-')]
-    num_workers = int(input("Number of workers: ").strip())
     chunk_dur = input("Chunk duration (s): ").strip()
 
     pass_1_thresholds = [i/10 for i in range(pass_1_thresh_range[0], pass_1_thresh_range[1] + 1)]
@@ -104,7 +103,6 @@ def searchks():
             'pass_1_path': pass_1_path,
             'pass_1_threshold': pass_1_thresh,
             'pass_2_thresholds': pass_2_thresholds,
-            'num_workers': num_workers,
             'chunk_dur': chunk_dur,
         }
 
