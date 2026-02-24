@@ -2,7 +2,6 @@ from pathlib import Path
 import shutil
 import pandas as pd
 import spikeinterface.full as si
-from concurrent.futures import ProcessPoolExecutor
 
 from tdtb.functions.filter_task_table import filter_task_table
 from tdtb.functions.run_kilosort import run_kilosort
@@ -17,7 +16,6 @@ def get_score_log(data):
     pass_1_path = data['pass_1_path']
     pass_1_threshold = data['pass_1_threshold']
     pass_2_thresholds = data['pass_2_thresholds']
-    num_workers = data['num_workers']
     chunk_dur = data['chunk_dur']
 
     event_name = 'gabors_on_time'
@@ -35,8 +33,8 @@ def get_score_log(data):
         }
         sort_dicts.append(sort_dict)
 
-    with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        list(executor.map(run_kilosort, sort_dicts))
+    for sort_dict in sort_dicts:
+        run_kilosort(sort_dict)
 
     thresh_list = [d.name for d in pass_1_path.iterdir() if d.is_dir()]
 

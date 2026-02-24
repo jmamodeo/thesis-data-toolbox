@@ -36,7 +36,7 @@ def get_score_log(data):
         sort_dicts.append(sort_dict)
 
     with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        list(executor.map(run_mountainsort, sort_dicts))
+        executor.map(run_mountainsort, sort_dicts)
 
     thresh_list = [d.name for d in seed_path.iterdir() if d.is_dir()]
 
@@ -87,7 +87,6 @@ def searchms():
     pca_seed_range = [int(i) for i in pca_seed_range.split('-')]
     thesh_range = input("Threshold range: ").strip()
     thesh_range = [int((float(i) * 10)) for i in thesh_range.split('-')]
-    num_workers = int(input("Number of workers: ").strip())
     chunk_dur = input("Chunk duration (s): ").strip()
 
     pca_seeds = [i for i in range(pca_seed_range[0], pca_seed_range[1] + 1)]
