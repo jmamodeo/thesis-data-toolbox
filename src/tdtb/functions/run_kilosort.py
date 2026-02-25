@@ -18,7 +18,7 @@ def run_kilosort(data):
         torch_device = 'cpu'
         print("GPU not available, using CPU.")
 
-    print(f"Running kilosort with threshold {pass_2_threshold}...")
+    print(f"Running kilosort with first pass threshold {pass_1_threshold} and second pass threshold {pass_2_threshold}...")
 
     sorter_params = {
         'sorter_name': 'kilosort4',
