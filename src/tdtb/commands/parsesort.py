@@ -3,6 +3,9 @@ import pandas as pd
 import spikeinterface.full as si
 import shutil
 
+from tdtb.functions.run_sort_analyzer import run_sort_analyzer
+from tdtb.functions.get_unit_waveforms import get_unit_waveforms
+
 def get_trial_frames(data):
     task_data = data['task_data']
     time_range = data['time_range']
@@ -20,15 +23,15 @@ def get_trial_frames(data):
     return data
 
 def get_trial_spikes(data):
-    sorting = data['sorting']
+    sort_object = data['sort_object']
     unit_ids = data['unit_ids']
     trial_frames = data['trial_frames']
 
-    sampling_rate = sorting.get_sampling_frequency()
+    sampling_rate = sort_object.get_sampling_frequency()
     trial_spikes = {}
 
     for unit_id in unit_ids:
-        unit_samples = sorting.get_unit_spike_train(unit_id)
+        unit_samples = sort_object.get_unit_spike_train(unit_id)
         unit_spikes = unit_samples / sampling_rate
 
         print(f'Collecting spikes for unit {unit_id}...')
@@ -59,18 +62,19 @@ def get_unit_tables(data):
         unit_table = data['task_data'].copy()
         unit_table['spikes'] = unit_spikes
 
-        unit_table = unit_table[unit_table['Outcome'] == 'Correct']
+        if 'Outcome' in unit_table.columns:
+            unit_table = unit_table[unit_table['Outcome'] == 'Correct']
 
         unit_table.to_csv(unit_path, index=False)
 
-    return data
-
-def unittables():
+def parsesort():
     parent_path = input("Sort parent path: ").strip().strip("'").strip()
     parent_path = Path(parent_path)
-    analysis_path = parent_path.parent.parent
+    analysis_path = parent_path.parent.parent.parent
     task_path = analysis_path / "task_table.csv"
+    rec_path = analysis_path / "whitened_rec" / "rec_object"
     sort_path = parent_path / "sort_object"
+    qual_path = parent_path / "qual_object"
 
     stage_path = '/Users/johnamodeo/Desktop/rec_data'
     stage_path = Path(stage_path)
@@ -82,24 +86,32 @@ def unittables():
     units_path.mkdir(parents=True, exist_ok=True)
 
     task_table = pd.read_csv(task_path)
-    sort_obj = si.load(sort_path)
+    rec_object = si.load(rec_path)
+    sort_object = si.load(sort_path)
 
+    frame_start = -0.2
+    frame_stop = 1.0
     event_name = 'gabors_on_time'
-    frame_start = -1.5
-    frame_stop = 1.25
 
-    unit_ids = sort_obj.get_unit_ids()
+    unit_ids = sort_object.get_unit_ids()
     unit_ids = sorted(unit_ids)
 
     data = {
         'task_data': task_table,
-        'sorting': sort_obj,
+        'rec_object': rec_object,
+        'sort_object': sort_object,
         'unit_ids': unit_ids,
         'time_range': (frame_start, frame_stop),
         'event_name': event_name,
         'units_path': units_path,
+        'qual_path': qual_path,
     }
+
+    run_sort_analyzer(data)
+    get_unit_waveforms(parent_path)
 
     data = get_trial_frames(data)
     data = get_trial_spikes(data)
-    data = get_unit_tables(data)
+    get_unit_tables(data)
+
+

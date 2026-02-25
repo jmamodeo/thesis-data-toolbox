@@ -19,7 +19,7 @@ def run_mountainsort(data):
 
     sorter_params = {
         'sorter_name': 'mountainsort5',
-        'detect_sign': -1,
+        'detect_sign': 1,
         'detect_threshold': threshold,
         'filter': False,
         'whiten': False,

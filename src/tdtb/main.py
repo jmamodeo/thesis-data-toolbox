@@ -4,14 +4,14 @@ from tdtb.commands.addtasks import addtasks
 from tdtb.commands.procrec import procrec
 from tdtb.commands.searchms import searchms
 from tdtb.commands.searchks import searchks
-from tdtb.commands.unittables import unittables
+from tdtb.commands.parsesort import parsesort
 
 COMMANDS = {
     'addtasks': addtasks,
     'procrec': procrec,
     'searchms': searchms,
     'searchks': searchks,
-    'unittables': unittables,
+    'parsesort': parsesort,
 }
 
 def build_parser():

@@ -87,12 +87,12 @@ def plot_trace_raster(plot_data):
     fig.subplots_adjust(left=0.08, right=0.98, top=0.96, bottom=0.06)
     return fig 
 
-def get_chan_traces(process_path):
-    process_path = Path(process_path)
-    analysis_path = process_path.parent
+def get_chan_traces(parent_path):
+    parent_path = Path(parent_path)
+    analysis_path = parent_path.parent
     task_path = analysis_path / "task_table.csv"
-    rec_path = process_path / "rec_object"
-    trace_path = process_path / "chan_traces.pdf"
+    rec_path = parent_path / "rec_object"
+    trace_path = parent_path / "chan_traces.pdf"
 
     if trace_path.exists():
         trace_path.unlink()

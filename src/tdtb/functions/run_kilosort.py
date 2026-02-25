@@ -1,6 +1,5 @@
-import random
-import numpy as np
 import spikeinterface.full as si
+import torch
 
 def run_kilosort(data):
     rec_object = data['rec_object']
@@ -12,6 +11,13 @@ def run_kilosort(data):
     job_kwargs = {"n_jobs": 1, "chunk_duration": f"{chunk_dur}s"}
     si.set_global_job_kwargs(**job_kwargs)
 
+    if torch.cuda.is_available():
+        torch_device = 'cuda'
+        print(f"Using GPU: {torch.cuda.get_device_name(0)}")
+    else:        
+        torch_device = 'cpu'
+        print("GPU not available, using CPU.")
+
     print(f"Running kilosort with threshold {pass_2_threshold}...")
 
     sorter_params = {
@@ -20,6 +26,7 @@ def run_kilosort(data):
         'Th_learned': pass_2_threshold,
         'do_CAR': False,
         'skip_kilosort_preprocessing': True,
+        'torch_device': torch_device,
     }
     
     si.run_sorter(

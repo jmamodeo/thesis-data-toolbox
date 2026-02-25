@@ -4,12 +4,11 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
 
-def spikewave():
-    tdt_path = input("TDT block path: ").strip().strip("'").strip()
-    tdt_path = Path(tdt_path)
-    sort_path = tdt_path / "sort_object"
-    qual_path = tdt_path / "qual_object"
-    wave_path = tdt_path / "spike_wave.pdf"
+def get_unit_waveforms(parent_path):
+    parent_path = Path(parent_path)
+    sort_path = parent_path / "sort_object"
+    qual_path = parent_path / "qual_object"
+    wave_path = parent_path / "unit_waveforms.pdf"
 
     if wave_path.exists():
         wave_path.unlink()
@@ -40,3 +39,4 @@ def spikewave():
             
             pdf.savefig(fig)
             plt.close(fig)
+            

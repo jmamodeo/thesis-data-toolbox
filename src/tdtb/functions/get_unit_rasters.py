@@ -7,47 +7,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 from tdtb.functions.filter_task_table import filter_task_table
 from tdtb.functions.get_trial_frames import get_trial_frames
-
-def get_trial_frames(data):
-    task_data = data['task_data']
-    time_range = data['time_range']
-    event_name = data['event_name']
-
-    trial_frames = []
-    for onset_time in task_data[event_name]:
-        start = onset_time + time_range[0]
-        end = onset_time + time_range[1]
-        trial_frame = (start, end)
-        trial_frames.append(trial_frame)
-
-    data['trial_frames'] = trial_frames
-
-    return data
-
-def get_trial_spikes(data):
-    sorting = data['sorting']
-    unit_ids = data['unit_ids']
-    trial_frames = data['trial_frames']
-
-    sampling_rate = sorting.get_sampling_frequency()
-    trial_spikes = {}
-
-    for unit_id in unit_ids:
-        unit_samples = sorting.get_unit_spike_train(unit_id)
-        unit_spikes = unit_samples / sampling_rate
-        trial_trains = []
-
-        for trial_frame in trial_frames:
-            lower_bound = (unit_spikes > trial_frame[0])
-            upper_bound = (unit_spikes < trial_frame[1])
-            trial_train = unit_spikes[lower_bound & upper_bound] - trial_frame[0]
-            trial_trains.append(trial_train)
-
-        trial_spikes[unit_id] = trial_trains
-
-    data['trial_spikes'] = trial_spikes
-
-    return data
+from tdtb.functions.get_trial_spikes import get_trial_spikes
 
 def plot_spike_rasters(data):
     unit_ids = data['unit_ids']
@@ -77,19 +37,17 @@ def plot_spike_rasters(data):
             pdf.savefig(fig)
             plt.close(fig)
 
-    return data
-
-def get_unit_rasters(thresh_path):
-    thresh_path = Path(thresh_path)
-    analysis_path = thresh_path.parent.parent.parent
+def get_unit_rasters(parent_path):
+    parent_path = Path(parent_path)
+    analysis_path = parent_path.parent.parent.parent
     task_path = analysis_path / "task_table.csv"
-    sort_path = thresh_path / "sort_object"
-    rast_path = thresh_path / "spike_rast.pdf"
+    sort_path = parent_path / "sort_object"
+    rast_path = parent_path / "unit_rasters.pdf"
 
     if rast_path.exists():
         rast_path.unlink()
 
-    sort_obj = si.load(sort_path)
+    sort_object = si.load(sort_path)
     task_table = pd.read_csv(task_path)
     task_table = filter_task_table(task_table)
 
@@ -104,11 +62,11 @@ def get_unit_rasters(thresh_path):
     frame_start = -0.5
     frame_stop = 1.25
 
-    unit_ids = sort_obj.get_unit_ids()
+    unit_ids = sort_object.get_unit_ids()
     unit_ids = sorted(unit_ids)
 
     data = {
-        "sorting": sort_obj,
+        "sorting": sort_object,
         "task_data": task_table,
         "unit_ids": unit_ids,
         "time_range": (frame_start, frame_stop),
@@ -119,4 +77,4 @@ def get_unit_rasters(thresh_path):
 
     data = get_trial_frames(data)
     data = get_trial_spikes(data)
-    data = plot_spike_rasters(data)
+    plot_spike_rasters(data)
