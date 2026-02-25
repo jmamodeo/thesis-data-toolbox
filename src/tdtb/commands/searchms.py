@@ -17,6 +17,7 @@ def get_score_log(data):
     seed_path = data['seed_path']
     pca_seed = data['pca_seed']
     thresholds = data['thresholds']
+    detect_sign = data['detect_sign']
     num_workers = data['num_workers']
     chunk_dur = data['chunk_dur']
 
@@ -29,6 +30,7 @@ def get_score_log(data):
         sort_dict = {
             'rec_object': rec_object,
             'threshold': threshold,
+            'detect_sign': detect_sign,
             'sort_path': sort_path,
             'pca_seed': pca_seed,
             'chunk_dur': chunk_dur,
@@ -87,11 +89,13 @@ def searchms():
     pca_seed_range = [int(i) for i in pca_seed_range.split('-')]
     thesh_range = input("Threshold range: ").strip()
     thesh_range = [int((float(i) * 10)) for i in thesh_range.split('-')]
+    detect_sign = input("Detection sign: ").strip().lower()
     num_workers = int(input("Number of workers: ").strip())
     chunk_dur = input("Chunk duration (s): ").strip()
 
     pca_seeds = [i for i in range(pca_seed_range[0], pca_seed_range[1] + 1)]
     thresholds = [i/10 for i in range(thesh_range[0], thesh_range[1] + 1)]
+    detect_sign = int(detect_sign) if detect_sign in ['-1', '1'] else -1
 
     task_table = pd.read_csv(task_path)
     task_table = filter_task_table(task_table)
@@ -106,6 +110,7 @@ def searchms():
             'seed_path': seed_path,
             'pca_seed': pca_seed,
             'thresholds': thresholds,
+            'detect_sign': detect_sign,
             'num_workers': num_workers,
             'chunk_dur': chunk_dur,
         }

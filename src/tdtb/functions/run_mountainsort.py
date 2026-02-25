@@ -5,6 +5,7 @@ import spikeinterface.full as si
 def run_mountainsort(data):
     rec_object = data['rec_object']
     threshold = data['threshold']
+    detect_sign = data['detect_sign']
     sort_path = data['sort_path']
     pca_seed = data['pca_seed']
     chunk_dur = data['chunk_dur']
@@ -19,7 +20,7 @@ def run_mountainsort(data):
 
     sorter_params = {
         'sorter_name': 'mountainsort5',
-        'detect_sign': 1,
+        'detect_sign': detect_sign,
         'detect_threshold': threshold,
         'filter': False,
         'whiten': False,

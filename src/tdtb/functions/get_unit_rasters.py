@@ -13,11 +13,20 @@ def plot_spike_rasters(data):
     unit_ids = data['unit_ids']
     trial_spikes = data['trial_spikes']
     rast_path = data['rast_path']
-    trial_numbers = data.get('trial_numbers', None)
+    trial_numbers = data['trial_numbers']
+    time_range = data['time_range']
+    task_data = data['task_data']
+    event_name = data['event_name']
+
+    event_times = task_data[event_name].to_numpy()
 
     with PdfPages(rast_path) as pdf:
         for unit in unit_ids:
+
+            print(f'Plotting rasters for unit {unit}...')
+
             unit_spikes = trial_spikes[unit]
+            unit_spikes = [np.asarray(spikes) - onset for spikes, onset in zip(unit_spikes, event_times)]
             trial_indices = np.arange(len(unit_spikes))
             fig, ax = plt.subplots()
             ax.eventplot(
@@ -33,6 +42,9 @@ def plot_spike_rasters(data):
                 ax.set_yticklabels([f"{int(tn)}" for tn in trial_numbers])
             else:
                 ax.set_yticklabels([f"{i + 1}" for i in trial_indices])
+            if time_range is not None:
+                ax.set_xlim(time_range)
+            ax.axvline(0, color='red', linestyle='--', linewidth=0.8, alpha=0.7)
             ax.set_title(f"Unit {unit}")
             pdf.savefig(fig)
             plt.close(fig)
